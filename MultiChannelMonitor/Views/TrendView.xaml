@@ -1,0 +1,293 @@
+<UserControl x:Class="Presentation.Wpf.Views.TrendView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:converters="clr-namespace:Presentation.Wpf.Converters"
+             xmlns:scottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF">
+    <UserControl.Resources>
+        <converters:QualityToBrushConverter x:Key="TrendQualityBrushConverter" />
+        <converters:AlarmStateToBrushConverter x:Key="TrendAlarmBrushConverter" />
+
+        <Style x:Key="TrendStatusLabelStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+            <Setter Property="FontSize" Value="11" />
+            <Setter Property="Margin" Value="0,0,0,2" />
+        </Style>
+
+        <Style x:Key="TrendStatusValueStyle" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource TextPrimaryBrush}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="TextTrimming" Value="CharacterEllipsis" />
+        </Style>
+
+        <Style x:Key="TrendSummaryBorderStyle" TargetType="Border">
+            <Setter Property="BorderBrush" Value="{StaticResource BorderBrush}" />
+            <Setter Property="BorderThickness" Value="0,0,1,0" />
+            <Setter Property="Padding" Value="10,4" />
+        </Style>
+    </UserControl.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Border Style="{StaticResource PanelBorderStyle}" Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="240" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="120" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <TextBlock Text="Tag"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0" />
+                <ComboBox Grid.Column="1"
+                          ItemsSource="{Binding AvailableTags}"
+                          SelectedItem="{Binding SelectedTagId}"
+                          Margin="0,0,12,0" />
+                <TextBlock Grid.Column="2"
+                           Text="Window"
+                           VerticalAlignment="Center"
+                           Margin="0,0,6,0" />
+                <ComboBox Grid.Column="3"
+                          ItemsSource="{Binding TimeWindows}"
+                          SelectedItem="{Binding SelectedTimeWindow}"
+                          Margin="0,0,16,0" />
+                <CheckBox Grid.Column="4"
+                          Content="Auto Refresh"
+                          IsChecked="{Binding IsAutoRefreshEnabled}"
+                          VerticalAlignment="Center"
+                          Margin="0,0,16,0" />
+                <Button Grid.Column="5"
+                        Content="Open History Query"
+                        Command="{Binding OpenHistoryCommand}"
+                        MinHeight="28"
+                        Padding="10,3"
+                        Margin="0,0,16,0" />
+                <TextBlock Grid.Column="6"
+                           Text="{Binding StatusMessage}"
+                           VerticalAlignment="Center"
+                           Foreground="{StaticResource TextMutedBrush}"
+                           TextTrimming="CharacterEllipsis"
+                           ToolTip="{Binding StatusMessage}" />
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="1"
+                Style="{StaticResource PanelBorderStyle}"
+                Padding="8"
+                Margin="0,0,0,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="1.25*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.2*" />
+                    <ColumnDefinition Width="1.5*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="6,0">
+                    <TextBlock Text="Current" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding CurrentValueText}" Style="{StaticResource TrendStatusValueStyle}" FontSize="17" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="6,0">
+                    <TextBlock Text="Quality" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding CurrentQuality, TargetNullValue=--}"
+                               Style="{StaticResource TrendStatusValueStyle}"
+                               Foreground="{Binding CurrentQuality, Converter={StaticResource TrendQualityBrushConverter}}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="6,0">
+                    <TextBlock Text="Alarm" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding CurrentAlarmState, TargetNullValue=--}"
+                               Style="{StaticResource TrendStatusValueStyle}"
+                               Foreground="{Binding CurrentAlarmState, Converter={StaticResource TrendAlarmBrushConverter}}" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="6,0">
+                    <TextBlock Text="Data" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding DataStatusText}">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock" BasedOn="{StaticResource TrendStatusValueStyle}">
+                                <Setter Property="Foreground" Value="#217A43" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DataStatusText}" Value="Waiting">
+                                        <Setter Property="Foreground" Value="{StaticResource TextMutedBrush}" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataStatusText}" Value="Paused">
+                                        <Setter Property="Foreground" Value="#8A6412" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataStatusText}" Value="Stopped">
+                                        <Setter Property="Foreground" Value="#8A6412" />
+                                    </DataTrigger>
+                                    <DataTrigger Binding="{Binding DataStatusText}" Value="Offline">
+                                        <Setter Property="Foreground" Value="{StaticResource AlarmBrush}" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+                </StackPanel>
+                <StackPanel Grid.Column="4" Margin="6,0">
+                    <TextBlock Text="Window" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding CollectionStatusText}" Style="{StaticResource TrendStatusValueStyle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="5" Margin="6,0">
+                    <TextBlock Text="Last Update" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding CurrentTimestampText}" Style="{StaticResource TrendStatusValueStyle}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2"
+                Style="{StaticResource PanelBorderStyle}"
+                Padding="8"
+                MinHeight="260">
+            <Grid>
+                <scottPlot:WpfPlot x:Name="TrendPlot" />
+                <Border Background="#DDF3F6F8"
+                        CornerRadius="4"
+                        IsHitTestVisible="False">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsOverlayVisible}" Value="True">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                MaxWidth="440">
+                        <TextBlock Text="{Binding OverlayText}"
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   TextAlignment="Center"
+                                   TextWrapping="Wrap" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="3"
+                Style="{StaticResource PanelBorderStyle}"
+                Padding="4"
+                Margin="0,10,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <Border Style="{StaticResource TrendSummaryBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Last" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding LastText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="1" Style="{StaticResource TrendSummaryBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Minimum" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding MinimumText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="2" Style="{StaticResource TrendSummaryBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Maximum" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding MaximumText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="3" Style="{StaticResource TrendSummaryBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="Average" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding AverageText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="4" Style="{StaticResource TrendSummaryBorderStyle}">
+                    <StackPanel>
+                        <TextBlock Text="StdDev" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding StdDevText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+                <Border Grid.Column="5" Padding="10,4">
+                    <StackPanel>
+                        <TextBlock Text="Valid / Total" Style="{StaticResource TrendStatusLabelStyle}" />
+                        <TextBlock Text="{Binding PointsText}" Style="{StaticResource TrendStatusValueStyle}" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="4"
+                Style="{StaticResource PanelBorderStyle}"
+                Padding="8"
+                Margin="0,10,0,0">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="1.4*" />
+                    <ColumnDefinition Width="2.5*" />
+                </Grid.ColumnDefinitions>
+
+                <StackPanel Margin="6,0">
+                    <TextBlock Text="Diagnosis" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding DiagnosisStateText}" Style="{StaticResource TrendStatusValueStyle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="1" Margin="6,0">
+                    <TextBlock Text="Spikes" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding SpikeText}" Style="{StaticResource TrendStatusValueStyle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="2" Margin="6,0">
+                    <TextBlock Text="Drift" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding DriftText}" Style="{StaticResource TrendStatusValueStyle}" />
+                </StackPanel>
+                <StackPanel Grid.Column="3" Margin="6,0">
+                    <TextBlock Text="Message" Style="{StaticResource TrendStatusLabelStyle}" />
+                    <TextBlock Text="{Binding DiagnosisMessage}"
+                               Style="{StaticResource TrendStatusValueStyle}"
+                               ToolTip="{Binding DiagnosisMessage}" />
+                </StackPanel>
+            </Grid>
+        </Border>
+
+        <Expander Grid.Row="5"
+                  Header="Recent Samples (latest 50)"
+                  IsExpanded="False"
+                  Margin="0,10,0,0">
+            <Border Style="{StaticResource PanelBorderStyle}"
+                    Padding="8"
+                    MaxHeight="210">
+                <DataGrid ItemsSource="{Binding Points}"
+                          AutoGenerateColumns="False"
+                          IsReadOnly="True"
+                          CanUserAddRows="False">
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Time"
+                                            Binding="{Binding TimeText}"
+                                            Width="*" />
+                        <DataGridTextColumn Header="Value"
+                                            Binding="{Binding Value, StringFormat=0.###}"
+                                            Width="180" />
+                    </DataGrid.Columns>
+                </DataGrid>
+            </Border>
+        </Expander>
+    </Grid>
+</UserControl>

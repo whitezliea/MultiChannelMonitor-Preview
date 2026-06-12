@@ -1,0 +1,90 @@
+<UserControl x:Class="Presentation.Wpf.Views.LogsSettingsView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <TabControl>
+        <TabItem Header="Operation Logs">
+            <Grid Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                <WrapPanel Margin="0,0,0,8">
+                    <TextBlock Text="Start" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <DatePicker SelectedDate="{Binding QueryStartLocal}" Width="130" Margin="0,0,12,0" />
+                    <TextBlock Text="End" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <DatePicker SelectedDate="{Binding QueryEndLocal}" Width="130" Margin="0,0,12,0" />
+                    <TextBlock Text="Level" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <ComboBox ItemsSource="{Binding AvailableLevels}" SelectedItem="{Binding SelectedLevel}" Width="100" Margin="0,0,12,0" />
+                    <TextBlock Text="Category" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBox Text="{Binding CategoryFilter, UpdateSourceTrigger=PropertyChanged}" Width="120" Margin="0,0,12,0" />
+                    <TextBlock Text="Max" VerticalAlignment="Center" Margin="0,0,6,0" />
+                    <TextBox Text="{Binding MaximumResults}" Width="60" Margin="0,0,12,0" />
+                    <Button Content="Query Logs" Command="{Binding QueryLogsCommand}" Width="110" />
+                </WrapPanel>
+                <TextBlock Grid.Row="1" Text="{Binding QueryStatus}" Margin="0,0,0,8" />
+                <Border Grid.Row="2" Style="{StaticResource PanelBorderStyle}">
+                    <DataGrid ItemsSource="{Binding OperationLogs}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Timestamp" Binding="{Binding Timestamp, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="180" />
+                            <DataGridTextColumn Header="Level" Binding="{Binding Level}" Width="90" />
+                            <DataGridTextColumn Header="Category" Binding="{Binding Category}" Width="120" />
+                            <DataGridTextColumn Header="Action" Binding="{Binding Action}" Width="170" />
+                            <DataGridTextColumn Header="Source" Binding="{Binding Source}" Width="170" />
+                            <DataGridTextColumn Header="Message" Binding="{Binding Message}" Width="220" />
+                            <DataGridTextColumn Header="Detail" Binding="{Binding Detail}" Width="*" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Alarm Thresholds">
+            <Grid Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource PanelBorderStyle}">
+                    <DataGrid ItemsSource="{Binding Thresholds}" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="TagId" Binding="{Binding TagId}" Width="*" />
+                            <DataGridTextColumn Header="WarnLow" Binding="{Binding WarningLow}" Width="100" />
+                            <DataGridTextColumn Header="AlarmLow" Binding="{Binding AlarmLow}" Width="100" />
+                            <DataGridTextColumn Header="WarnHigh" Binding="{Binding WarningHigh}" Width="100" />
+                            <DataGridTextColumn Header="AlarmHigh" Binding="{Binding AlarmHigh}" Width="100" />
+                            <DataGridCheckBoxColumn Header="Alarm Enabled" Binding="{Binding AlarmEnabled}" Width="105" />
+                            <DataGridCheckBoxColumn Header="Historized" Binding="{Binding IsHistorized}" Width="90" />
+                            <DataGridTextColumn Header="History Interval" Binding="{Binding HistoryIntervalMs}" Width="110" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,0">
+                    <Button Content="Save Changes" Command="{Binding SaveThresholdsCommand}" Width="120" />
+                    <TextBlock Text="{Binding SettingsStatus}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </TabItem>
+        <TabItem Header="Runtime Settings">
+            <Grid Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <Border Style="{StaticResource PanelBorderStyle}">
+                    <DataGrid ItemsSource="{Binding RuntimeSettings}" AutoGenerateColumns="False" CanUserAddRows="False">
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="Name" Binding="{Binding Name}" Width="*" />
+                            <DataGridTextColumn Header="Value" Binding="{Binding Value}" Width="140" />
+                            <DataGridTextColumn Header="Unit" Binding="{Binding Unit}" Width="100" />
+                            <DataGridTextColumn Header="Effect" Binding="{Binding Effect}" Width="190" IsReadOnly="True" />
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Border>
+                <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="0,12,0,0">
+                    <Button Content="Save" Command="{Binding SaveRuntimeSettingsCommand}" Width="100" />
+                    <TextBlock Text="{Binding SettingsStatus}" VerticalAlignment="Center" Margin="12,0,0,0" />
+                </StackPanel>
+            </Grid>
+        </TabItem>
+    </TabControl>
+</UserControl>

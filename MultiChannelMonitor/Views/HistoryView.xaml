@@ -1,0 +1,111 @@
+<UserControl x:Class="Presentation.Wpf.Views.HistoryView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:scottPlot="clr-namespace:ScottPlot.WPF;assembly=ScottPlot.WPF">
+    <UserControl.Resources>
+        <Style TargetType="{x:Type DatePickerTextBox}">
+            <Setter Property="IsReadOnly" Value="True" />
+        </Style>
+        <DataTemplate x:Key="TwoDigitTimePartTemplate">
+            <TextBlock Text="{Binding StringFormat={}{0:00}}" />
+        </DataTemplate>
+    </UserControl.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="230" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Border Style="{StaticResource PanelBorderStyle}" Margin="0,0,0,12">
+            <WrapPanel>
+                <TextBlock Text="Tag" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <ComboBox ItemsSource="{Binding AvailableTags}" SelectedItem="{Binding SelectedTagId}" Width="210" Margin="0,0,12,0" />
+                <TextBlock Text="Start (local)" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <DatePicker SelectedDate="{Binding StartDateLocal, Mode=TwoWay}"
+                            SelectedDateFormat="Short"
+                            Width="125"
+                            Margin="0,0,4,0" />
+                <ComboBox ItemsSource="{Binding AvailableHours}"
+                          SelectedItem="{Binding StartHour, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TwoDigitTimePartTemplate}"
+                          Width="48"
+                          Margin="0,0,2,0" />
+                <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,2,0" />
+                <ComboBox ItemsSource="{Binding AvailableMinutes}"
+                          SelectedItem="{Binding StartMinute, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TwoDigitTimePartTemplate}"
+                          Width="48"
+                          Margin="0,0,10,0" />
+                <TextBlock Text="End (local)" VerticalAlignment="Center" Margin="0,0,6,0" />
+                <DatePicker SelectedDate="{Binding EndDateLocal, Mode=TwoWay}"
+                            SelectedDateFormat="Short"
+                            Width="125"
+                            Margin="0,0,4,0" />
+                <ComboBox ItemsSource="{Binding AvailableHours}"
+                          SelectedItem="{Binding EndHour, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TwoDigitTimePartTemplate}"
+                          Width="48"
+                          Margin="0,0,2,0" />
+                <TextBlock Text=":" VerticalAlignment="Center" Margin="0,0,2,0" />
+                <ComboBox ItemsSource="{Binding AvailableMinutes}"
+                          SelectedItem="{Binding EndMinute, Mode=TwoWay}"
+                          ItemTemplate="{StaticResource TwoDigitTimePartTemplate}"
+                          Width="48"
+                          Margin="0,0,10,0" />
+                <Button Content="1h" Command="{Binding LastHourCommand}" Margin="0,0,4,0" />
+                <Button Content="24h" Command="{Binding Last24HoursCommand}" Margin="0,0,4,0" />
+                <Button Content="7d" Command="{Binding Last7DaysCommand}" Margin="0,0,12,0" />
+                <Button Content="Query" Command="{Binding QueryCommand}" Margin="0,0,12,0" />
+                <Button Content="Cancel" Command="{Binding CancelCommand}" Margin="0,0,12,0" />
+                <Button Content="Export CSV" Command="{Binding ExportCommand}" Margin="0,0,12,0" />
+                <Button Content="Previous" Command="{Binding PreviousPageCommand}" Margin="0,0,4,0" />
+                <Button Content="Next" Command="{Binding NextPageCommand}" Margin="0,0,12,0" />
+                <TextBlock Text="{Binding QuerySummary}" VerticalAlignment="Center" Foreground="{StaticResource TextMutedBrush}" />
+            </WrapPanel>
+        </Border>
+        <Border Grid.Row="1"
+                Style="{StaticResource PanelBorderStyle}"
+                Padding="8"
+                Margin="0,0,0,12">
+            <Grid>
+                <scottPlot:WpfPlot x:Name="HistoryTrendPlot" />
+                <Border Background="#DDF3F6F8"
+                        CornerRadius="4"
+                        IsHitTestVisible="False">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="Visibility" Value="Collapsed" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding HasTrendPreview}" Value="False">
+                                    <Setter Property="Visibility" Value="Visible" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="History Trend Preview"
+                                   Foreground="{StaticResource TextPrimaryBrush}"
+                                   FontSize="16"
+                                   FontWeight="SemiBold"
+                                   HorizontalAlignment="Center" />
+                        <TextBlock Text="Run a query to display the current page."
+                                   Foreground="{StaticResource TextMutedBrush}"
+                                   Margin="0,4,0,0"
+                                   HorizontalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+        <Border Grid.Row="2" Style="{StaticResource PanelBorderStyle}">
+            <DataGrid ItemsSource="{Binding QueryResults}" AutoGenerateColumns="False" IsReadOnly="True" CanUserAddRows="False">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Timestamp (Local)" Binding="{Binding TimestampLocal}" Width="*" />
+                    <DataGridTextColumn Header="Value" Binding="{Binding Value, StringFormat=0.###}" Width="160" />
+                    <DataGridTextColumn Header="Quality" Binding="{Binding Quality}" Width="120" />
+                    <DataGridTextColumn Header="Alarm" Binding="{Binding AlarmState}" Width="120" />
+                    <DataGridTextColumn Header="Sequence" Binding="{Binding SequenceNo}" Width="120" />
+                </DataGrid.Columns>
+            </DataGrid>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,0 +1,9 @@
+<Solution>
+  <Project Path="Application/Application.csproj" />
+  <Project Path="AppLogging/AppLogging.csproj" Id="a1e1a5db-706d-47e0-ad78-88836a298c01" />
+  <Project Path="Domain/Domain.csproj" />
+  <Project Path="Infrastructure/Infrastructure.csproj" />
+  <Project Path="MultiChannelMonitor/Presentation.Wpf.csproj" />
+  <Project Path="Simulator/Simulator.csproj" />
+  <Project Path="Tests/Tests.csproj" />
+</Solution>
