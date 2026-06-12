@@ -361,3 +361,10 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+
+# 项目文档
+!Application/DTOs/Logs/
+!Application/DTOs/Logs/*.cs
+!Domain/Logs/
+!Domain/Logs/*.cs
+!Application/UseCases/Logs/
