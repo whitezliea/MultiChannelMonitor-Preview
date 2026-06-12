@@ -9,13 +9,14 @@ namespace Presentation.Wpf;
 
 public partial class MainWindow : Window
 {
-    private readonly ShellViewModel _viewModel = ViewModelLocator.CreateShellViewModel();
+    private readonly ShellViewModel _viewModel;
     private bool _shutdownStarted;
     private bool _shutdownCompleted;
 
-    public MainWindow()
+    public MainWindow(ShellViewModel viewModel)
     {
         InitializeComponent();
+        _viewModel = viewModel ?? throw new ArgumentNullException(nameof(viewModel));
         DataContext = _viewModel;
     }
 
