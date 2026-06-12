@@ -2,6 +2,10 @@
 
 基于 .NET 10、WPF 与 MVVM 的多通道测量仪器监控和数据分析系统。
 
+## Preview
+
+![](D:\MyCode\GoodProject\MultiChannelMonitor-Preview\README_IMGS\App-Preview.gif)
+
 ## 项目简介
 
 MultiChannelMonitor 是一个面向实验室测量、工业仪器监控和上位机开发演示的 Windows 桌面应用。项目通过内置模拟器持续生成设备状态、温度、压力、光强、电压、电流、振动以及 16 x 16 光强矩阵数据，并将原始设备帧转换为统一的 Tag 运行时状态。
@@ -124,7 +128,7 @@ MultiChannelMonitor/
 │   ├── Profiles/                # 默认设备规格与模拟配置
 │   └── Scenarios/               # 正常、警报、离线和矩阵异常场景
 ├── Tests/                       # xUnit 测试与测试支持代码
-├── mydoc/                       # 中文设计、检查和执行文档
+├── README.MD                    # 项目gai文档
 ├── MultiChannelMonitor.slnx     # 解决方案入口
 └── LICENSE.txt                  # GNU AGPL v3 许可证
 ```
