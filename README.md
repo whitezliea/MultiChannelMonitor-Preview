@@ -4,7 +4,7 @@
 
 ## Preview
 
-![](D:\MyCode\GoodProject\MultiChannelMonitor-Preview\README_IMGS\App-Preview.gif)
+![](./README_IMGS/App-Preview.gif)
 
 ## 项目简介
 
